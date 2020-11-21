@@ -1,0 +1,17 @@
+{
+  "name": "addons",
+  "version": "1.0.0",
+  "description": "Share your configuration over the network using Windows file sharing.",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "prettier": "^2.2.0"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "semi": false,
+    "singleQuote": true,
+    "endOfLine": "lf"
+  }
+}

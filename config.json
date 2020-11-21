@@ -1,0 +1,46 @@
+{
+  "name": "Local Samba Share",
+  "version": "1.0.0",
+  "slug": "samba",
+  "description": "Expose External drive folders with SMB/CIFS",
+  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "startup": "services",
+  "boot": "auto",
+  "init": false,
+  "host_network": true,
+  "map": [
+    "config:rw",
+    "ssl:rw",
+    "addons:rw",
+    "share:rw",
+    "backup:rw",
+    "media:rw"
+  ],
+  "options": {
+    "workgroup": "WORKGROUP",
+    "username": ["homeassistant"],
+    "password": [""],
+    "interface": "",
+    "allow_hosts": [
+      "10.0.0.0/8",
+      "172.16.0.0/12",
+      "192.168.0.0/16",
+      "fe80::/10"
+    ],
+    "veto_files": ["._*", ".DS_Store", "Thumbs.db", "icon?", ".Trashes"]
+  },
+  "schema": {
+    "workgroup": "str",
+    "username": ["str"],
+    "password": ["str"],
+    "interface": "str",
+    "allow_hosts": ["str"],
+    "veto_files": ["str"]
+  },
+  "devices": [
+    "/dev/sda1:/dev/sda1:rwm",
+    "/dev/sda2:/dev/sda2:rwm",
+    "/dev/sda3:/dev/sda3:rwm"
+  ],
+  "image": "homeassistant/{arch}-addon-samba"
+}

@@ -28,7 +28,7 @@ for mountPoint in $mounts; do
     if [[ ! -e $target ]]; then
         bashio::log.info "Creating folder $target."
         mkdir -p $target
-        chmod -R 02775 $target
+        chmod -R 02777 $target
     fi
 
     if [[ -e "$device" ]]; then

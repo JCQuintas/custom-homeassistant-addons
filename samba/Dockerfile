@@ -19,7 +19,3 @@ RUN \
 
 # Copy data
 COPY rootfs /
-
-RUN chmod +x /etc/cont-init.d/samba.sh
-
-CMD [ "/etc/cont-init.d/samba.sh" ]

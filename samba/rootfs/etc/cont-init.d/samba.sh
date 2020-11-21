@@ -13,11 +13,6 @@ declare password
 declare username
 declare veto_files
 
-# Check Login data
-if ! bashio::config.has_value 'username' || ! bashio::config.has_value 'password'; then
-    bashio::exit.nok "Setting a username and password is required!"
-fi
-
 # Workgroup and interface
 sed -i "s|%%WORKGROUP%%|$(bashio::config 'workgroup')|g" "${CONF}"
 sed -i "s|%%INTERFACE%%|$(bashio::config 'interface')|g" "${CONF}"

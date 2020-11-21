@@ -13,6 +13,7 @@ declare password
 declare username
 declare veto_files
 declare mounts
+declare valid_users
 
 # Workgroup and interface
 sed -i "s|%%WORKGROUP%%|$(bashio::config 'workgroup')|g" "${CONF}"
@@ -77,3 +78,6 @@ for login in $(bashio::config 'logins'); do
     bashio::log.info "Settings password for user $username."
     echo -e "${password}\n${password}" | smbpasswd -a -s -c "${CONF}" "${username}"
 done
+
+valid_users=$(bashio::config "logins | map(.name) | join(\" \")")
+sed -i "s#%%VALID_USERS%%#${valid_users}#g" "${CONF}"

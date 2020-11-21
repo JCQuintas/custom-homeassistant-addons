@@ -1,6 +1,6 @@
 {
   "name": "Local Samba Share",
-  "version": "9.3.1",
+  "version": "9.3.0",
   "slug": "samba",
   "description": "Expose External drive folders with SMB/CIFS",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],

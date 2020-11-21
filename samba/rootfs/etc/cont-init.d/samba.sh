@@ -2,6 +2,8 @@
 # ==============================================================================
 # Prepare the Samba service for running
 # ==============================================================================
+set -e
+
 readonly CONF="/etc/samba/smb.conf"
 declare allow_hosts
 declare compatibility_mode
@@ -19,6 +21,20 @@ fi
 # Workgroup and interface
 sed -i "s|%%WORKGROUP%%|$(bashio::config 'workgroup')|g" "${CONF}"
 sed -i "s|%%INTERFACE%%|$(bashio::config 'interface')|g" "${CONF}"
+
+for mountPoint in $(bashio::config -c 'mounts[]'); do
+    device=$(echo ${mountPoint} | jq -r '.device')
+    target=$(echo ${mountPoint} | jq -r '.target')
+
+    if [[ ! -e $target ]]; then
+        mkdir -p $target
+        chmod -R 02775 $target
+    fi
+
+    if [[ -e "$device" ]]; then
+        mount $device $target
+    fi
+done
 
 # Veto files
 veto_files=""
@@ -45,13 +61,12 @@ allow_hosts=$(bashio::config "allow_hosts | join(\" \")")
 sed -i "s#%%ALLOW_HOSTS%%#${allow_hosts}#g" "${CONF}"
 
 # Init users
-for login in $(bashio::config 'logins[]'); do
+for login in $(bashio::config -c 'logins[]'); do
     username=$(echo ${login} | jq -r '.username')
     password=$(echo ${login} | jq -r '.password')
 
     addgroup "${username}"
     adduser -D -H -G "${username}" -s /bin/false "${username}"
 
-    echo -e "${password}\n${password}" \
-        | smbpasswd -a -s -c "${CONF}" "${username}"
+    echo -e "${password}\n${password}" | smbpasswd -a -s -c "${CONF}" "${username}"
 done

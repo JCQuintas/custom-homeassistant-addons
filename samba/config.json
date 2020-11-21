@@ -8,41 +8,39 @@
   "boot": "auto",
   "init": false,
   "host_network": true,
-  "map": [
-    "config:rw",
-    "ssl:rw",
-    "addons:rw",
-    "share:rw",
-    "backup:rw",
-    "media:rw"
-  ],
+  "map": ["config:rw", "ssl:rw", "addons:rw", "share:rw", "backup:rw", "media:rw"],
   "options": {
     "workgroup": "WORKGROUP",
     "logins": [
-      { "username": "homeassistant", "password": "" },
-      { "username": "homeassistant2", "password": "" }
+      {
+        "username": "homeassistant",
+        "password": ""
+      }
     ],
     "interface": "",
-    "allow_hosts": [
-      "10.0.0.0/8",
-      "172.16.0.0/12",
-      "192.168.0.0/16",
-      "fe80::/10"
-    ],
-    "veto_files": ["._*", ".DS_Store", "Thumbs.db", "icon?", ".Trashes"]
+    "allow_hosts": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fe80::/10"],
+    "veto_files": ["._*", ".DS_Store", "Thumbs.db", "icon?", ".Trashes"],
+    "mounts": [
+      {
+        "device": "/dev/sda1",
+        "target": "/mnt/somewhere"
+      }
+    ]
   },
   "schema": {
     "workgroup": "str",
     "logins": [{ "username": "str", "password": "str" }],
     "interface": "str",
     "allow_hosts": ["str"],
-    "veto_files": ["str"]
+    "veto_files": ["str"],
+    "mounts": [
+      {
+        "device": "str",
+        "target": "str"
+      }
+    ]
   },
-  "devices": [
-    "/dev/sda1:/dev/sda1:rwm",
-    "/dev/sda2:/dev/sda2:rwm",
-    "/dev/sda3:/dev/sda3:rwm"
-  ],
+  "devices": ["/dev/sda1:/dev/sda1:rwm", "/dev/sda2:/dev/sda2:rwm", "/dev/sda3:/dev/sda3:rwm"],
   "image": "homeassistant/{arch}-addon-samba",
   "full_access": true
 }

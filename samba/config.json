@@ -11,6 +11,7 @@
   "map": ["config:rw", "ssl:rw", "addons:rw", "share:rw", "backup:rw", "media:rw"],
   "options": {
     "workgroup": "WORKGROUP",
+    "name": "",
     "logins": [
       {
         "username": "homeassistant",
@@ -29,6 +30,7 @@
   },
   "schema": {
     "workgroup": "str",
+    "name": "str",
     "logins": [{ "username": "str", "password": "str" }],
     "interface": "str",
     "allow_hosts": ["str"],

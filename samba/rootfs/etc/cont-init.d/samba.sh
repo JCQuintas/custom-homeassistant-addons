@@ -62,7 +62,7 @@ allow_hosts=$(bashio::config "allow_hosts | join(\" \")")
 sed -i "s#%%ALLOW_HOSTS%%#${allow_hosts}#g" "${CONF}"
 
 # Init users
-for login in $(bashio::config 'logins[]'); do
+for login in $(bashio::config 'logins'); do
     username=$(echo ${login} | jq -r '.username')
     password=$(echo ${login} | jq -r '.password')
     bashio::log.info "Creating user $username."

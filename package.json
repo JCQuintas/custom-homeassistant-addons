@@ -1,14 +1,14 @@
 {
-  "name": "addons",
+  "name": "custom-homeassistant-addons",
   "version": "1.0.0",
-  "description": "Share your configuration over the network using Windows file sharing.",
-  "main": "index.js",
+  "description": "Custom HomeAssistant addons",
   "author": "",
   "license": "ISC",
   "dependencies": {
     "prettier": "^2.2.0"
   },
   "prettier": {
+    "printWidth": 120,
     "trailingComma": "es5",
     "semi": false,
     "singleQuote": true,

@@ -18,8 +18,10 @@
   ],
   "options": {
     "workgroup": "WORKGROUP",
-    "username": ["homeassistant"],
-    "password": [""],
+    "logins": [
+      { "username": "homeassistant", "password": "" },
+      { "username": "homeassistant2", "password": "" }
+    ],
     "interface": "",
     "allow_hosts": [
       "10.0.0.0/8",
@@ -31,8 +33,7 @@
   },
   "schema": {
     "workgroup": "str",
-    "username": ["str"],
-    "password": ["str"],
+    "logins": [{ "username": "str", "password": "str" }],
     "interface": "str",
     "allow_hosts": ["str"],
     "veto_files": ["str"]
@@ -42,5 +43,6 @@
     "/dev/sda2:/dev/sda2:rwm",
     "/dev/sda3:/dev/sda3:rwm"
   ],
-  "image": "homeassistant/{arch}-addon-samba"
+  "image": "homeassistant/{arch}-addon-samba",
+  "full_access": true
 }

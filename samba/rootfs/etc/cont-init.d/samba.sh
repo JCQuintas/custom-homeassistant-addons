@@ -44,22 +44,14 @@ sed -i "s|%%NAME%%|${name}|g" "${CONF}"
 allow_hosts=$(bashio::config "allow_hosts | join(\" \")")
 sed -i "s#%%ALLOW_HOSTS%%#${allow_hosts}#g" "${CONF}"
 
-# Compatibility mode, enables the use of the legacy SMB1 protocol
-compatibility_mode=""
-if bashio::config.true "compatibility_mode"; then
-    compatibility_mode+="   client min protocol = NT1\n"
-    compatibility_mode+="   server min protocol = NT1\n"
-fi
-sed -i "s#%%COMPATIBILITY_MODE%%#${compatibility_mode}#g" "${CONF}"
+# Init users
+for login in $(bashio::config 'logins[]'); do
+    username=$(echo ${login} | jq -r '.username')
+    password=$(echo ${login} | jq -r '.password')
 
-# Init user
-username=$(bashio::config 'username')
-password=$(bashio::config 'password')
+    addgroup "${username}"
+    adduser -D -H -G "${username}" -s /bin/false "${username}"
 
-addgroup "${username}"
-adduser -D -H -G "${username}" -s /bin/false "${username}"
-
-sed -i "s|%%USERNAME%%|${username}|g" "${CONF}"
-# shellcheck disable=SC1117
-echo -e "${password}\n${password}" \
-    | smbpasswd -a -s -c "${CONF}" "${username}"
+    echo -e "${password}\n${password}" \
+        | smbpasswd -a -s -c "${CONF}" "${username}"
+done

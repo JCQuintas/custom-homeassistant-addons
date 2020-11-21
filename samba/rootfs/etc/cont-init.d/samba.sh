@@ -12,12 +12,16 @@ declare name
 declare password
 declare username
 declare veto_files
+declare mounts
 
 # Workgroup and interface
 sed -i "s|%%WORKGROUP%%|$(bashio::config 'workgroup')|g" "${CONF}"
 sed -i "s|%%INTERFACE%%|$(bashio::config 'interface')|g" "${CONF}"
 
-for mountPoint in $(bashio::config 'mounts[]'); do
+mounts=$(bashio::config 'mounts[]')
+bashio::log.info $mounts
+
+for mountPoint in $mounts; do
     device=$(echo ${mountPoint} | jq -r '.device')
     target=$(echo ${mountPoint} | jq -r '.target')
 

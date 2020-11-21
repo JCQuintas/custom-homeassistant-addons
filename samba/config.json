@@ -1,7 +1,7 @@
 {
   "name": "Local Samba Share",
   "version": "9.3.0",
-  "slug": "samba",
+  "slug": "local_samba_share",
   "description": "Expose External drive folders with SMB/CIFS",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "startup": "services",
@@ -41,6 +41,5 @@
     ]
   },
   "devices": ["/dev/sda1:/dev/sda1:rwm", "/dev/sda2:/dev/sda2:rwm", "/dev/sda3:/dev/sda3:rwm"],
-  "image": "homeassistant/{arch}-addon-samba",
   "full_access": true
 }

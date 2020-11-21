@@ -49,7 +49,7 @@ sed -i "s|%%VETO_FILES%%|${veto_files}|g" "${CONF}"
 sed -i "s|%%DELETE_VETO_FILES%%|${delete_veto_files}|g" "${CONF}"
 
 # Read hostname from API or setting default "hassio"
-name=$(bashio::config "name")
+name=$(bashio::config "hostname")
 if bashio::var.is_empty "${name}"; then
     bashio::log.warning "Name not set, trying to use hostname."
     name=$(bashio::info.hostname)

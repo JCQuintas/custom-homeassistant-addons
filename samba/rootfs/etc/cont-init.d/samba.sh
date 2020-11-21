@@ -22,11 +22,13 @@ for mountPoint in $(bashio::config -c 'mounts[]'); do
     target=$(echo ${mountPoint} | jq -r '.target')
 
     if [[ ! -e $target ]]; then
+        bashio::log.info "Creating folder $target."
         mkdir -p $target
         chmod -R 02775 $target
     fi
 
     if [[ -e "$device" ]]; then
+        bashio::log.info "Mounting device $device on target folder $target."
         mount $device $target
     fi
 done
@@ -59,9 +61,11 @@ sed -i "s#%%ALLOW_HOSTS%%#${allow_hosts}#g" "${CONF}"
 for login in $(bashio::config -c 'logins[]'); do
     username=$(echo ${login} | jq -r '.username')
     password=$(echo ${login} | jq -r '.password')
+    bashio::log.info "Creating user $username."
 
     addgroup "${username}"
     adduser -D -H -G "${username}" -s /bin/false "${username}"
 
+    bashio::log.info "Settings password for user $username."
     echo -e "${password}\n${password}" | smbpasswd -a -s -c "${CONF}" "${username}"
 done

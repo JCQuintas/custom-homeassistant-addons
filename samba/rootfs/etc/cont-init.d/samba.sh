@@ -89,7 +89,8 @@ for login in $(bashio::config 'logins'); do
     echo "   valid users = ${username}" >> $CONF
     echo "   veto files = ${veto_files}" >> $CONF
     echo "   delete veto files = ${delete_veto_files}" >> $CONF
+    echo "" >> $CONF
 done
 
-valid_users=$(bashio::config "logins | map(.name) | join(\" \")")
+valid_users=$(bashio::config "logins | map(.username) | join(\" \")")
 sed -i "s#%%VALID_USERS%%#${valid_users}#g" "${CONF}"

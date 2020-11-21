@@ -18,7 +18,7 @@ declare mounts
 sed -i "s|%%WORKGROUP%%|$(bashio::config 'workgroup')|g" "${CONF}"
 sed -i "s|%%INTERFACE%%|$(bashio::config 'interface')|g" "${CONF}"
 
-mounts=$(bashio::config 'mounts[]')
+mounts=$(bashio::config 'mounts')
 bashio::log.info $mounts
 
 for mountPoint in $mounts; do

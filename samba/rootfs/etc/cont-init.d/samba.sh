@@ -67,13 +67,15 @@ allow_hosts=$(bashio::config "allow_hosts | join(\" \")")
 sed -i "s#%%ALLOW_HOSTS%%#${allow_hosts}#g" "${CONF}"
 
 # Init users
+addgroup "home"
+# addgroup "root" "home" 
+
 for login in $(bashio::config 'logins'); do
     username=$(echo ${login} | jq -r '.username')
     password=$(echo ${login} | jq -r '.password')
-    bashio::log.info "Creating user $username."
 
-    addgroup "${username}"
-    adduser -D -H -G "${username}" -s /bin/false "${username}"
+    bashio::log.info "Creating user $username."
+    echo -e "${password}\n${password}" | adduser -H -G "home" -s /bin/false "${username}"
 
     bashio::log.info "Settings password for user $username."
     echo -e "${password}\n${password}" | smbpasswd -a -s -c "${CONF}" "${username}"

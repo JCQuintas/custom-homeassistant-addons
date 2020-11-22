@@ -13,7 +13,6 @@ declare password
 declare username
 declare veto_files
 declare mounts
-declare valid_users
 
 # Workgroup and interface
 sed -i "s|%%WORKGROUP%%|$(bashio::config 'workgroup')|g" "${CONF}"
@@ -35,6 +34,8 @@ for mountPoint in $mounts; do
     if [[ -e "$device" ]]; then
         bashio::log.info "Mounting device $device on target folder $target."
         mount $device $target
+        chmod -R 02775 $target
+        chown -R root:home /share
     fi
 done
 
@@ -80,19 +81,16 @@ for login in $(bashio::config 'logins'); do
     bashio::log.info "Settings password for user $username."
     echo -e "${password}\n${password}" | smbpasswd -a -s -c "${CONF}" "${username}"
 
-    # echo "[Backup ${username}]" >> $CONF
-    # echo "   comment = System Backups" >> $CONF
-    # echo "   path = /share/${username}" >> $CONF
-    # echo "   browseable = yes" >> $CONF
-    # echo "   writeable = yes" >> $CONF
-    # echo "   create mask = 0600" >> $CONF
-    # echo "   directory mask = 0700" >> $CONF
-    # echo "   fruit:time machine = yes" >> $CONF
-    # echo "   valid users = ${username}" >> $CONF
-    # echo "   veto files = ${veto_files}" >> $CONF
-    # echo "   delete veto files = ${delete_veto_files}" >> $CONF
-    # echo "" >> $CONF
+    echo "[Backup ${username}]" >> $CONF
+    echo "   comment = System Backups" >> $CONF
+    echo "   path = /share/${username}" >> $CONF
+    echo "   browseable = yes" >> $CONF
+    echo "   writeable = yes" >> $CONF
+    echo "   create mask = 0600" >> $CONF
+    echo "   directory mask = 0700" >> $CONF
+    echo "   fruit:time machine = yes" >> $CONF
+    echo "   valid users = ${username}" >> $CONF
+    echo "   veto files = ${veto_files}" >> $CONF
+    echo "   delete veto files = ${delete_veto_files}" >> $CONF
+    echo "" >> $CONF
 done
-
-valid_users=$(bashio::config "logins | map(.username) | join(\" \")")
-sed -i "s#%%VALID_USERS%%#${valid_users}#g" "${CONF}"

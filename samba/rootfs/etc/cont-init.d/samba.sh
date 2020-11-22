@@ -21,6 +21,9 @@ sed -i "s|%%INTERFACE%%|$(bashio::config 'interface')|g" "${CONF}"
 mounts=$(bashio::config 'mounts')
 bashio::log.info $mounts
 
+# Create "home" group
+addgroup "home"
+
 for mountPoint in $mounts; do
     device=$(echo ${mountPoint} | jq -r '.device')
     target=$(echo ${mountPoint} | jq -r '.target')
@@ -68,9 +71,6 @@ allow_hosts=$(bashio::config "allow_hosts | join(\" \")")
 sed -i "s#%%ALLOW_HOSTS%%#${allow_hosts}#g" "${CONF}"
 
 # Init users
-addgroup "home"
-# addgroup "root" "home" 
-
 for login in $(bashio::config 'logins'); do
     username=$(echo ${login} | jq -r '.username')
     password=$(echo ${login} | jq -r '.password')

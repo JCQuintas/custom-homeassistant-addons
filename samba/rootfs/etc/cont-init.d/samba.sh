@@ -88,6 +88,7 @@ for login in $(bashio::config 'logins'); do
     echo "   writeable = yes" >> $CONF
     echo "   create mask = 0600" >> $CONF
     echo "   directory mask = 0700" >> $CONF
+    echo "   vfs objects = catia fruit streams_xattr" >> $CONF
     echo "   fruit:time machine = yes" >> $CONF
     echo "   valid users = ${username}" >> $CONF
     echo "   veto files = ${veto_files}" >> $CONF

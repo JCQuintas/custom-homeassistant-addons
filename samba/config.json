@@ -15,7 +15,8 @@
     "logins": [
       {
         "username": "homeassistant",
-        "password": ""
+        "password": "",
+        "backup": true
       }
     ],
     "interface": "",
@@ -31,7 +32,13 @@
   "schema": {
     "workgroup": "str",
     "hostname": "str",
-    "logins": [{ "username": "str", "password": "str" }],
+    "logins": [
+      {
+        "username": "str",
+        "password": "str",
+        "backup": "bool?"
+      }
+    ],
     "interface": "str",
     "allow_hosts": ["str"],
     "veto_files": ["str"],

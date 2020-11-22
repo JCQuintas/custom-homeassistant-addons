@@ -74,6 +74,7 @@ sed -i "s#%%ALLOW_HOSTS%%#${allow_hosts}#g" "${CONF}"
 for login in $(bashio::config 'logins'); do
     username=$(echo ${login} | jq -r '.username')
     password=$(echo ${login} | jq -r '.password')
+    backup=$(echo ${login} | jq -r '.backup')
 
     bashio::log.info "Creating user $username."
     echo -e "${password}\n${password}" | adduser -H -G "home" -s /bin/false "${username}"
@@ -81,17 +82,19 @@ for login in $(bashio::config 'logins'); do
     bashio::log.info "Settings password for user $username."
     echo -e "${password}\n${password}" | smbpasswd -a -s -c "${CONF}" "${username}"
 
-    echo "[Backup ${username}]" >> $CONF
-    echo "   comment = System Backups" >> $CONF
-    echo "   path = /share/${username}" >> $CONF
-    echo "   browseable = yes" >> $CONF
-    echo "   writeable = yes" >> $CONF
-    echo "   create mask = 0600" >> $CONF
-    echo "   directory mask = 0700" >> $CONF
-    echo "   vfs objects = catia fruit streams_xattr" >> $CONF
-    echo "   fruit:time machine = yes" >> $CONF
-    echo "   valid users = ${username}" >> $CONF
-    echo "   veto files = ${veto_files}" >> $CONF
-    echo "   delete veto files = ${delete_veto_files}" >> $CONF
-    echo "" >> $CONF
+    if bashio::var.true "$backup"; then
+        echo "[Backup ${username}]" >> $CONF
+        echo "   comment = System Backups" >> $CONF
+        echo "   path = /share/${username}" >> $CONF
+        echo "   browseable = yes" >> $CONF
+        echo "   writeable = yes" >> $CONF
+        echo "   create mask = 0600" >> $CONF
+        echo "   directory mask = 0700" >> $CONF
+        echo "   vfs objects = catia fruit streams_xattr" >> $CONF
+        echo "   fruit:time machine = yes" >> $CONF
+        echo "   valid users = ${username}" >> $CONF
+        echo "   veto files = ${veto_files}" >> $CONF
+        echo "   delete veto files = ${delete_veto_files}" >> $CONF
+        echo "" >> $CONF
+    fi
 done

@@ -24,24 +24,6 @@ bashio::log.info $mounts
 # Create "home" group
 addgroup "home"
 
-needs_mounting=false
-
-for mountPoint in $mounts; do
-    target=$(echo ${mountPoint} | jq -r '.target')
-    uuid=$(echo ${mountPoint} | jq -r '.uuid')
-    type=$(echo ${mountPoint} | jq -r '.type')
-
-    if ! grep -q $uuid /etc/fstab; then
-      needs_mounting=true
-      echo "UUID=${uuid}	${target}	${type}	defaults	0	2"
-      echo "UUID=${uuid}	${target}	${type}	defaults	0	2" >> /etc/fstab
-    fi
-done
-
-if [ "$needs_mounting" = true ] ; then
-    mount -a
-fi
-
 for mountPoint in $mounts; do
     device=$(echo ${mountPoint} | jq -r '.device')
     target=$(echo ${mountPoint} | jq -r '.target')
@@ -49,14 +31,15 @@ for mountPoint in $mounts; do
     if [[ ! -e $target ]]; then
         bashio::log.info "Creating folder $target."
         mkdir -p $target
-        chmod -R 02775 $target
+        # chmod -R 02775 $target
     fi
 
     if [[ -e "$device" ]]; then
         bashio::log.info "Mounting device $device on target folder $target."
         mount $device $target
-        chmod -R 02775 $target
-        chown -R root:home /share
+        chown -R root:home $target
+        # chmod -R 02775 $target
+        # chown -R root:home /share
     fi
 done
 

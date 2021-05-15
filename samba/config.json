@@ -9,6 +9,15 @@
   "init": false,
   "host_network": true,
   "map": ["config:rw", "ssl:rw", "addons:rw", "share:rw", "backup:rw", "media:rw"],
+  "udev": true,
+  "usb": true,
+  "full_access": true,
+  "host_dbus": true,
+  "kernel_modules": true,
+  "privileged": ["SYS_ADMIN", "SYS_RAWIO", "SYS_RESOURCE", "SYS_MODULE"],
+  "devicetree": false,
+  "apparmor": false,
+  "host_ipc": true,
   "options": {
     "workgroup": "WORKGROUP",
     "hostname": "",
@@ -52,7 +61,5 @@
         "type": "str"
       }
     ]
-  },
-  "devices": ["/dev/sda1:/dev/sda1:rwm", "/dev/sda2:/dev/sda2:rwm", "/dev/sda3:/dev/sda3:rwm"],
-  "full_access": true
+  }
 }

@@ -24,6 +24,24 @@ bashio::log.info $mounts
 # Create "home" group
 addgroup "home"
 
+needs_mounting=false
+
+for mountPoint in $mounts; do
+    target=$(echo ${mountPoint} | jq -r '.target')
+    uuid=$(echo ${mountPoint} | jq -r '.uuid')
+    type=$(echo ${mountPoint} | jq -r '.type')
+
+    if ! grep -q $uuid /etc/fstab; then
+      needs_mounting=true
+      echo "UUID=${uuid}	${target}	${type}	defaults	0	2"
+      echo "UUID=${uuid}	${target}	${type}	defaults	0	2" >> /etc/fstab
+    fi
+done
+
+if [ "$needs_mounting" = true ] ; then
+    mount -a
+fi
+
 for mountPoint in $mounts; do
     device=$(echo ${mountPoint} | jq -r '.device')
     target=$(echo ${mountPoint} | jq -r '.target')

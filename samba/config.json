@@ -1,6 +1,6 @@
 {
   "name": "Local Samba Share",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "slug": "local_samba_share",
   "description": "Expose External drive folders with SMB/CIFS",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
@@ -25,7 +25,9 @@
     "mounts": [
       {
         "device": "/dev/sda1",
-        "target": "/mnt/somewhere"
+        "target": "/mnt/somewhere",
+        "uuid": "<UUID>",
+        "type": "ext4"
       }
     ]
   },
@@ -45,7 +47,9 @@
     "mounts": [
       {
         "device": "str",
-        "target": "str"
+        "target": "str",
+        "uuid": "str",
+        "type": "str"
       }
     ]
   },

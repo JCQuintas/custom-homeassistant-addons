@@ -5,6 +5,8 @@
 set -e
 
 readonly CONF="/etc/samba/smb.conf"
+readonly SEPARATOR="__SAMBA_SHARE_SEPARATOR__"
+readonly WHITE_SPACE=" "
 declare allow_hosts
 declare compatibility_mode
 declare delete_veto_files
@@ -20,28 +22,11 @@ sed -i "s|%%INTERFACE%%|$(bashio::config 'interface')|g" "${CONF}"
 
 mounts=$(bashio::config 'mounts')
 bashio::log.info $mounts
+# Remove possible white spaces from mount name
+mounts=$(echo ${mounts//$WHITE_SPACE/$SEPARATOR})
 
 # Create "home" group
 addgroup "home"
-
-for mountPoint in $mounts; do
-    device=$(echo ${mountPoint} | jq -r '.device')
-    target=$(echo ${mountPoint} | jq -r '.target')
-
-    if [[ ! -e $target ]]; then
-        bashio::log.info "Creating folder $target."
-        mkdir -p $target
-        # chmod -R 02775 $target
-    fi
-
-    if [[ -e "$device" ]]; then
-        bashio::log.info "Mounting device $device on target folder $target."
-        mount $device $target
-        chown -R root:home $target
-        # chmod -R 02775 $target
-        # chown -R root:home /share
-    fi
-done
 
 # Veto files
 veto_files=""
@@ -73,27 +58,76 @@ sed -i "s#%%ALLOW_HOSTS%%#${allow_hosts}#g" "${CONF}"
 
 # Init users
 for login in $(bashio::config 'logins'); do
+    bashio::log.info "Starting configuration of $login."
+
     username=$(echo ${login} | jq -r '.username')
     password=$(echo ${login} | jq -r '.password')
-    backup=$(echo ${login} | jq -r '.backup')
 
     bashio::log.info "Creating user $username."
     echo -e "${password}\n${password}" | adduser -H -G "home" -s /bin/false "${username}"
 
     bashio::log.info "Settings password for user $username."
     echo -e "${password}\n${password}" | smbpasswd -a -s -c "${CONF}" "${username}"
+done
+
+for mount_point in $mounts; do
+    # revert whitespace changes for this mount point
+    mount_point=$(echo ${mount_point//$SEPARATOR/$WHITE_SPACE})
+    bashio::log.info "Starting configuration of $mount_point."
+
+    disk_label=$(echo ${mount_point} | jq -r '.disk_label')
+    backup=$(echo ${mount_point} | jq -r '.backup')
+    mount_name=$(echo ${mount_point} | jq -r '.name')
+
+    users_length=$(echo ${mount_point} | jq -r '.users' | jq length)
+    valid_users='@home'
+
+    if [ "$users_length" -gt "0" ]; then
+      valid_users=$(echo ${mount_point} | jq -r '.users | join(" ")')
+    fi
+    bashio::log.info "Using users '$valid_users' for disk $disk_label."
+
+    folder="/share/${disk_label}"
+    disk="/dev/disk/by-label/${disk_label}"
+
+    if [[ ! -e $folder ]]; then
+        bashio::log.info "Creating folder $folder."
+        mkdir -p $folder
+    fi
+
+    if [[ -e "$disk" ]]; then
+        bashio::log.info "Mounting device $disk on target folder $folder."
+        mount $disk $folder
+        chown -R root:home $folder
+    fi
 
     if bashio::var.true "$backup"; then
-        echo "[Backup ${username}]" >> $CONF
-        echo "   comment = System Backups" >> $CONF
-        echo "   path = /share/${username}" >> $CONF
+        bashio::log.info "Seting disk $disk_label as a backup disk."
+
+        echo "[${mount_name}]" >> $CONF
+        echo "   path = ${folder}" >> $CONF
         echo "   browseable = yes" >> $CONF
         echo "   writeable = yes" >> $CONF
         echo "   create mask = 0600" >> $CONF
         echo "   directory mask = 0700" >> $CONF
         echo "   vfs objects = catia fruit streams_xattr" >> $CONF
         echo "   fruit:time machine = yes" >> $CONF
-        echo "   valid users = ${username}" >> $CONF
+        echo "   valid users = ${valid_users}" >> $CONF
+        echo "   veto files = ${veto_files}" >> $CONF
+        echo "   delete veto files = ${delete_veto_files}" >> $CONF
+        echo "" >> $CONF
+    else
+        bashio::log.info "Seting disk $disk_label as a regular share."
+
+        echo "[${mount_name}]" >> $CONF
+        echo "   path = ${folder}" >> $CONF
+        echo "   browseable = yes" >> $CONF
+        echo "   writeable = yes" >> $CONF
+        echo "   create mask = 0665" >> $CONF
+        echo "   force create mode = 0665" >> $CONF
+        echo "   directory mask = 02775" >> $CONF
+        echo "   force directory mode = 02775" >> $CONF
+        echo "   valid users = ${valid_users}" >> $CONF
         echo "   veto files = ${veto_files}" >> $CONF
         echo "   delete veto files = ${delete_veto_files}" >> $CONF
         echo "" >> $CONF

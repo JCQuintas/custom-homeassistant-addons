@@ -24,21 +24,20 @@
     "logins": [
       {
         "username": "homeassistant",
-        "password": "",
-        "backup": true
+        "password": ""
+      }
+    ],
+    "mounts": [
+      {
+        "disk_label": "backup",
+        "name": "Backup",
+        "backup": true,
+        "users": []
       }
     ],
     "interface": "",
     "allow_hosts": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fe80::/10"],
-    "veto_files": ["._*", ".DS_Store", "Thumbs.db", "icon?", ".Trashes"],
-    "mounts": [
-      {
-        "device": "/dev/sda1",
-        "target": "/mnt/somewhere",
-        "uuid": "<UUID>",
-        "type": "ext4"
-      }
-    ]
+    "veto_files": ["._*", ".DS_Store", "Thumbs.db", "icon?", ".Trashes"]
   },
   "schema": {
     "workgroup": "str",
@@ -46,20 +45,19 @@
     "logins": [
       {
         "username": "str",
-        "password": "str",
-        "backup": "bool?"
+        "password": "str"
+      }
+    ],
+    "mounts": [
+      {
+        "disk_label": "str",
+        "name": "str",
+        "backup": "bool?",
+        "users": ["str"]
       }
     ],
     "interface": "str",
     "allow_hosts": ["str"],
-    "veto_files": ["str"],
-    "mounts": [
-      {
-        "device": "str",
-        "target": "str",
-        "uuid": "str",
-        "type": "str"
-      }
-    ]
+    "veto_files": ["str"]
   }
 }

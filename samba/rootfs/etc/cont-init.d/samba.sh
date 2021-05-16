@@ -93,11 +93,13 @@ for mount_point in $mounts; do
     if [[ ! -e $folder ]]; then
         bashio::log.info "Creating folder $folder."
         mkdir -p $folder
+        chmod -R 02775 $folder
     fi
 
     if [[ -e "$disk" ]]; then
         bashio::log.info "Mounting device $disk on target folder $folder."
         mount $disk $folder
+        chmod -R 02775 $folder
         chown -R root:home $folder
     fi
 
@@ -133,3 +135,5 @@ for mount_point in $mounts; do
         echo "" >> $CONF
     fi
 done
+
+chown -R root:home /share
